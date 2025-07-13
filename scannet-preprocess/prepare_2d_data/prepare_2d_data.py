@@ -18,7 +18,7 @@ import numpy as np
 import skimage.transform as sktf
 import imageio.v2 as imageio
 from SensorData import SensorData
-import util
+import util as util
 # try:
 #     from prepare_2d_data.SensorData import SensorData
 # except:

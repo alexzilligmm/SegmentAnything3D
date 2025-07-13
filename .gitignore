@@ -1,0 +1,11 @@
+__pycache__
+
+.vscode
+
+ScanNet
+scannet-preprocess
+data
+libs
+checkpoints
+outputs
+preprocessed-data

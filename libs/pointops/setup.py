@@ -8,6 +8,7 @@ os.environ['OPT'] = " ".join(
     flag for flag in opt.split() if flag != '-Wstrict-prototypes'
 )
 
+
 src = 'src'
 sources = [os.path.join(root, file) for root, dirs, files in os.walk(src)
            for file in files
@@ -23,7 +24,10 @@ setup(
         CUDAExtension(
             name='pointops._C',
             sources=sources,
-            extra_compile_args={'cxx': ['-g'], 'nvcc': ['-O2']}
+            extra_compile_args={
+                'cxx': ['-g', '-D_GLIBCXX_USE_CXX11_ABI=0', '-std=c++17'],
+                'nvcc': ['-O2', '-D_GLIBCXX_USE_CXX11_ABI=0', '-std=c++17']
+            }
         )
     ],
     cmdclass={'build_ext': BuildExtension}

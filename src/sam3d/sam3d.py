@@ -272,7 +272,7 @@ if __name__ == '__main__':
         train_scenes = train_file.read().splitlines()
     with open(args.scannetv2_val_path) as val_file:
         val_scenes = val_file.read().splitlines()
-    # in theory changing this line to SAM2 syntax should be enough
+    # TODO: in theory changing this line to SAM2 syntax should be enough
     mask_generator = SamAutomaticMaskGenerator(build_sam(checkpoint=args.sam_checkpoint_path).to(device="cuda"))
     voxelize = Voxelize(voxel_size=args.voxel_size, mode="train", keys=("coord", "color", "group"))
     if not os.path.exists(args.save_path):

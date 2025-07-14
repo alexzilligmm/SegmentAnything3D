@@ -9,3 +9,7 @@ libs
 checkpoints
 outputs
 preprocessed-data
+Relation3D
+predictions
+gts
+build

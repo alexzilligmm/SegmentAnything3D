@@ -1,3 +1,4 @@
+import glob
 import torch
 import numpy as np
 import open3d as o3d
@@ -63,30 +64,42 @@ def get_args():
 
 def main():
     args = get_args()
-    results_path = args.results_path
-    gt_path = args.gt_path
+    results_root = args.results_path
+    gt_root = args.gt_path
     output_folder = args.output_folder
-    
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
-    
-    # Load the .ply file
-    print("Loading the results from:", results_path)
-    results = torch.load(results_path)
 
-    print("obtaining labels from ground truth data:", gt_path)
-    labels = get_labels(gt_path, len(results))
-    
-    print("Obtaining oracle labels for the results...")
-    oracle_labels = oracle_classes(labels, results)
-    
-    print(oracle_labels)
-    
-    scene_name = os.path.basename(os.path.dirname(gt_path))
-    file_name = os.path.basename(gt_path)  
+    os.makedirs(output_folder, exist_ok=True)
+    mask_dir = os.path.join(output_folder, "predicted_masks")
+    os.makedirs(mask_dir, exist_ok=True)
 
-    print(f"Processing scene: {scene_name}, file: {file_name}")
+    all_results = sorted(glob.glob(os.path.join(results_root, "scene*.pth")))
+    
+    for res_path in all_results:
+        results = torch.load(res_path)
+        scene_name = os.path.basename(res_path).split('.')[0]
+        scene_id = scene_name[:12]
+        gt_file = os.path.join(gt_root, scene_name, f"{scene_name}_vh_clean_2.labels.ply")
+        predictions_txt_path = os.path.join(output_folder, f"{scene_name}.txt")
 
+        if not os.path.exists(gt_file):
+            print(f"[!] Skipping {scene_id}, GT not found.")
+            print(f"Expected GT file: {gt_file}")
+            continue
+        with open(predictions_txt_path, 'w') as pred_file:
+            print(f"Processing scene: {scene_id}")
+            labels = get_labels(gt_file, len(results))
+            oracle_labels = oracle_classes(labels, results)
+
+            for idx, (id, label) in enumerate(oracle_labels.items()):
+                mask_rel_path = f"predicted_masks/{scene_id}_{str(idx).zfill(3)}.txt"
+                mask_abs_path = os.path.join(output_folder, mask_rel_path)
+
+                with open(mask_abs_path, 'w') as mask_f:
+                    mask_f.writelines(f"{int(b)}\n" for b in results == id)
+
+                pred_file.write(f"{mask_rel_path} {label} 1.0\n")
+
+    print(f"\nDone. Output written to `{output_folder}`.")
 
 
 if __name__ == "__main__":

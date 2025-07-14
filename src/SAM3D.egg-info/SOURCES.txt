@@ -9,6 +9,13 @@ src/SAM3D.egg-info/requires.txt
 src/SAM3D.egg-info/top_level.txt
 src/sam3d/__init__.py
 src/sam3d/format_for_is.py
+src/sam3d/format_gt.py
+src/sam3d/prepare_data_ist.py
 src/sam3d/sam3d.py
+src/sam3d/scannet_util.py
 src/sam3d/util.py
 src/sam3d/visualise_output.py
+src/sam3d/evaluation/__init__.py
+src/sam3d/evaluation/evaluate_instance_seg.py
+src/sam3d/evaluation/util.py
+src/sam3d/evaluation/util_3d.py

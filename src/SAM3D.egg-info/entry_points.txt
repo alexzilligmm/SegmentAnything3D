@@ -1,3 +1,6 @@
 [console_scripts]
+eval_instance = sam3d.evaluation.evaluate_instance_seg:main
 format = sam3d.format_for_is:main
+gt_format = sam3d.format_gt:main
+prepare_data = sam3d.prepare_data_ist:main
 sam3d = sam3d.sam3d:main

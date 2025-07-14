@@ -1,0 +1,3 @@
+[console_scripts]
+format = sam3d.format_for_is:main
+sam3d = sam3d.sam3d:main

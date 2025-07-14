@@ -15,13 +15,15 @@ import pointops
 import random
 import argparse
 
-# TODO: try from sam-2 it should be installed
-from segment_anything import build_sam, SamAutomaticMaskGenerator
+from sam2.automatic_mask_generator import SAM2AutomaticMaskGenerator
+from sam2.build_sam import build_sam2
+
 from concurrent.futures import ProcessPoolExecutor
 from itertools import repeat
 from PIL import Image
 from os.path import join
-from util import *
+
+from sam3d.util import *
 
 
 def pcd_ensemble(org_path, new_path, data_path, vis_path):
@@ -259,12 +261,13 @@ def get_args():
     parser.add_argument('--img_size', default=[640,480])
     parser.add_argument('--voxel_size', default=0.05)
     parser.add_argument('--th', default=50, help='threshold of ignoring small groups to avoid noise pixel')
+    parser.add_argument('--config_file', type=str, default='', help='the path of config file for SAM2')
 
     args = parser.parse_args()
     return args
 
 
-if __name__ == '__main__':
+def main():
     args = get_args()
     print("Arguments:")
     print(args)
@@ -272,12 +275,17 @@ if __name__ == '__main__':
         train_scenes = train_file.read().splitlines()
     with open(args.scannetv2_val_path) as val_file:
         val_scenes = val_file.read().splitlines()
-    # TODO: in theory changing this line to SAM2 syntax should be enough
-    mask_generator = SamAutomaticMaskGenerator(build_sam(checkpoint=args.sam_checkpoint_path).to(device="cuda"))
+    
+    mask_generator = SAM2AutomaticMaskGenerator(
+        build_sam2(config_file=args.config_file, checkpoint=args.sam_checkpoint_path).to(device="cuda")
+    )
     voxelize = Voxelize(voxel_size=args.voxel_size, mode="train", keys=("coord", "color", "group"))
     if not os.path.exists(args.save_path):
         os.makedirs(args.save_path)
     scene_names = sorted(os.listdir(args.rgb_path))
     for scene_name in scene_names:
-        seg_pcd(scene_name, args.rgb_path, args.data_path, args.save_path, mask_generator, args.voxel_size, 
-            voxelize, args.th, train_scenes, val_scenes, args.save_2dmask_path)
+        seg_pcd(scene_name, args.rgb_path, args.data_path, args.save_path, mask_generator, args.voxel_size,
+                voxelize, args.th, train_scenes, val_scenes, args.save_2dmask_path)
+
+if __name__ == '__main__':
+    main()

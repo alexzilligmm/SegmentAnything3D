@@ -18,4 +18,8 @@ export TORCH_CUDA_ARCH_LIST="8.6"
 
 cd "$(dirname "$0")/libs/pointops"
 
+which python
+
+echo "Installing pointops..."
+
 python setup.py install

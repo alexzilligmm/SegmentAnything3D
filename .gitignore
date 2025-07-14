@@ -2,14 +2,13 @@ __pycache__
 
 .vscode
 
-ScanNet
+scannet
 scannet-preprocess
 data
 libs
 checkpoints
 outputs
 preprocessed-data
-Relation3D
 predictions
 gts
 build

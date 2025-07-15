@@ -23,6 +23,7 @@ from concurrent.futures import ProcessPoolExecutor
 from itertools import repeat
 from PIL import Image
 from os.path import join
+import tqdm
 
 from sam3d.util import *
 
@@ -35,7 +36,7 @@ def pcd_ensemble(org_path, new_path, data_path, vis_path):
         org_pcd = np.array(segments['segIndices'])
     match_inds = [(i, i) for i in range(len(new_pcd))]
     new_group = cal_group(dict(group=new_pcd), dict(group=org_pcd), match_inds)
-    print(new_group.shape)
+    # print(new_group.shape)
     data = torch.load(data_path)
     visualize_partition(data["coord"], new_group, vis_path)
 
@@ -68,10 +69,13 @@ def get_pcd(scene_name, color_name, rgb_path, mask_generator, save_2dmask_path):
     save_2dmask_path = join(save_2dmask_path, scene_name)
     if mask_generator is not None:
         group_ids = get_sam(color_image, mask_generator)
-        if not os.path.exists(save_2dmask_path):
-            os.makedirs(save_2dmask_path)
-        img = Image.fromarray(num_to_natural(group_ids).astype(np.int16), mode='I;16')
-        img.save(join(save_2dmask_path, color_name[0:-4] + '.png'))
+        
+        if save_2dmask_path != '':
+            if not os.path.exists(save_2dmask_path):
+                os.makedirs(save_2dmask_path)
+            
+            img = Image.fromarray(num_to_natural(group_ids).astype(np.int16), mode='I;16')
+            img.save(join(save_2dmask_path, color_name[0:-4] + '.png'))
     else:
         group_path = join(save_2dmask_path, color_name[0:-4] + '.png')
         img = Image.open(group_path)
@@ -203,13 +207,13 @@ def cal_2_scenes(pcd_list, index, voxel_size, voxelize, th=50):
 
 
 def seg_pcd(scene_name, rgb_path, data_path, save_path, mask_generator, voxel_size, voxelize, th, train_scenes, val_scenes, save_2dmask_path):
-    print(scene_name, flush=True)
+    # print(scene_name, flush=True)
     if os.path.exists(join(save_path, scene_name + ".pth")):
         return
     color_names = sorted(os.listdir(join(rgb_path, scene_name, 'color')), key=lambda a: int(os.path.basename(a).split('.')[0]))
     pcd_list = []
     for color_name in color_names:
-        print(color_name, flush=True)
+        # print(color_name, flush=True)
         pcd_dict = get_pcd(scene_name, color_name, rgb_path, mask_generator, save_2dmask_path)
         if len(pcd_dict["coord"]) == 0:
             continue
@@ -217,7 +221,7 @@ def seg_pcd(scene_name, rgb_path, data_path, save_path, mask_generator, voxel_si
         pcd_list.append(pcd_dict)
     
     while len(pcd_list) != 1:
-        print(len(pcd_list), flush=True)
+        # print(len(pcd_list), flush=True)
         new_pcd_list = []
         for indice in pairwise_indices(len(pcd_list)):
             # print(indice)
@@ -284,7 +288,7 @@ def main():
     if not os.path.exists(args.save_path):
         os.makedirs(args.save_path)
     scene_names = sorted(os.listdir(args.rgb_path))
-    for scene_name in scene_names:
+    for scene_name in tqdm.tqdm(scene_names, desc="Processing scenes..."):
         seg_pcd(scene_name, args.rgb_path, args.data_path, args.save_path, mask_generator, args.voxel_size,
                 voxelize, args.th, train_scenes, val_scenes, args.save_2dmask_path)
 

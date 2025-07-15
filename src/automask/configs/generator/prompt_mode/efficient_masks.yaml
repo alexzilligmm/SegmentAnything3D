@@ -1,0 +1,11 @@
+#configs/generator/mode/efficient.yaml
+name: efficient_masks
+
+defaults:
+  - logger: prs_logger
+  - cluster_alg: hdbscan
+  - _self_
+
+metric: cosine  # cosine,euclidean,iou
+centres_selection: median # options: mean, fmax, median
+points_per_cluster: 1

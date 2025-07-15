@@ -6,8 +6,8 @@ build-backend = "setuptools.build_meta"
 package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
-where = ["src"]
-include = ["sam3d", "sam3d.*"]
+where   = ["src"]
+include = ["sam3d", "sam3d.*", "automask", "automask.*"]
 
 [project]
 name = "SAM3D"

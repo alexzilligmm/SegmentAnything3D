@@ -1,0 +1,12 @@
+#_target_: cuml.cluster.HDBSCAN
+name: no_crops
+hdbscan:
+  _target_: hdbscan.hdbscan_.HDBSCAN
+  min_cluster_size: 10 
+  min_samples: 5 
+  cluster_selection_epsilon: 0.0
+  max_cluster_size: 4096
+  metric: 'precomputed'
+  alpha: 1.0
+  cluster_selection_method: 'eom'
+  allow_single_cluster: false 

@@ -156,7 +156,7 @@ dependencies = [
 
 [project.scripts]
 sam3d = "sam3d.sam3d:main"
-format = "sam3d.format_for_is:main"
-gt_format = "sam3d.format_gt:main"
-prepare_data = "sam3d.prepare_data_ist:main"
+format = "sam3d.data_util.format_for_is:main"
+gt_format = "sam3d.data_util.format_gt:main"
+prepare_data = "sam3d.data_util.prepare_data_ist:main"
 eval_instance = "sam3d.evaluation.evaluate_instance_seg:main"

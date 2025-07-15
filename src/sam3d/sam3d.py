@@ -4,6 +4,7 @@ Main Script
 Author: Yunhan Yang (yhyang.myron@gmail.com)
 """
 
+import json
 import os
 import cv2
 import numpy as np

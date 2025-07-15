@@ -35,6 +35,8 @@ def main():
         instance_num = int(instance_label.max()) + 1
         for inst_id in range(instance_num):
             instance_mask = np.where(instance_label == inst_id)[0]
+            if instance_mask.size == 0:
+                continue
             sem_id = int(label[instance_mask[0]])
             if sem_id == -100:
                 sem_id = 0

@@ -14,7 +14,7 @@ import open3d as o3d
 import plyfile
 import torch
 
-import sam3d.scannet_util as scannet_util
+import sam3d.util.scannet_util as scannet_util
 from segmentator import segment_mesh
 
 # Map relevant classes to {0,1,...,19}, and ignored classes to -100

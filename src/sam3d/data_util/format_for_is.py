@@ -6,9 +6,6 @@ import argparse
 import os
 from plyfile import PlyData
 
-# takes a ply file with N points and ids and produces a folder that respects the ScanNet format
-# classes are oracled for now...
-# TODO: make this to hanlde a whole folder of results and not only one scene, for now we assume a single results .ply file is given
 
 def splitall(path):
     allparts = []

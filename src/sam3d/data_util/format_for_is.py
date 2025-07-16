@@ -5,6 +5,7 @@ import open3d as o3d
 import argparse
 import os
 from plyfile import PlyData
+import tqdm
 
 
 def splitall(path):
@@ -71,7 +72,7 @@ def main():
 
     all_results = sorted(glob.glob(os.path.join(results_root, "scene*.pth")))
     
-    for res_path in all_results:
+    for res_path in tqdm.tqdm(all_results, desc="Processing results"):
         results = torch.load(res_path)
         scene_name = os.path.basename(res_path).split('.')[0]
         scene_id = scene_name[:12]

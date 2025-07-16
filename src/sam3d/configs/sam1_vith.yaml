@@ -1,0 +1,4 @@
+defaults:
+  - generator: sam1_generator
+  - model: sam_vit_h
+  - _self_

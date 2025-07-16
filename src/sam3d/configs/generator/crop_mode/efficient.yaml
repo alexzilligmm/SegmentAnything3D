@@ -1,0 +1,9 @@
+name: efficient
+
+defaults:
+  - logger: prs_logger
+  - cluster_alg: hdbscan
+  - _self_
+
+metric: cosine 
+crop_merging_threshold: 0.7

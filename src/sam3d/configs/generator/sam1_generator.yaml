@@ -1,0 +1,4 @@
+# configs/generator/sam1_generator.yaml
+generator:
+  _target_: segment_anything.SamAutomaticMaskGenerator
+

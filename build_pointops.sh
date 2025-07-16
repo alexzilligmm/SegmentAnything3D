@@ -14,7 +14,7 @@ export CXX=/storage/software/compiler/gcc-10.1.0/bin/g++
 echo "Using CUDA at $CUDA_HOME"
 echo "Using GCC at $CC"
 
-export TORCH_CUDA_ARCH_LIST="8.6"
+export TORCH_CUDA_ARCH_LIST="8.0;8.6;9.0"
 
 cd "$(dirname "$0")/libs/pointops"
 

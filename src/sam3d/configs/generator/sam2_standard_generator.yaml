@@ -1,0 +1,20 @@
+generator:
+  _target_: sam2.automatic_mask_generator.SAM2AutomaticMaskGenerator
+
+  model: ??
+  points_per_side: 32
+  points_per_batch: 64
+  pred_iou_thresh: 0.5
+  stability_score_thresh: 0.6
+  stability_score_offset: 1.0
+  mask_threshold: 0.0
+  box_nms_thresh: 0.3
+  crop_n_layers: 0
+  crop_nms_thresh: 0.7
+  crop_overlap_ratio: 0.34
+  crop_n_points_downscale_factor: 1
+  point_grids: null
+  min_mask_region_area: 0
+  output_mode: binary_mask
+  use_m2m: false
+  multimask_output: true

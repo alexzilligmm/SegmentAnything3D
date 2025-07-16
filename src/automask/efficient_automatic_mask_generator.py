@@ -32,6 +32,7 @@ from automask.amg import (
     merge_crop_boxes,
 )
 
+from sam2.automatic_mask_generator import SAM2AutomaticMaskGenerator
 from sam2.modeling.sam2_base import SAM2Base
 from sam2.sam2_image_predictor import SAM2ImagePredictor
 from sam2.utils.amg import (
@@ -54,7 +55,7 @@ from sam2.utils.amg import (
 )
 
 
-class SAM2EfficientAutomaticMaskGenerator:
+class SAM2EfficientAutomaticMaskGenerator(SAM2AutomaticMaskGenerator):
     def __init__(
         self,
         crop_mode,

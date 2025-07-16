@@ -10,17 +10,18 @@ import cv2
 import numpy as np
 import open3d as o3d
 import torch
-import copy
-import multiprocessing as mp
 import pointops
-import random
+
+from hydra import compose, initialize
+from hydra.utils import instantiate
+from omegaconf import OmegaConf
+from hydra.core.global_hydra import GlobalHydra  
+
 import argparse
 
-from sam2.automatic_mask_generator import SAM2AutomaticMaskGenerator
-from sam2.build_sam import build_sam2
+from automask import build_generator, sam_factory
 
-from concurrent.futures import ProcessPoolExecutor
-from itertools import repeat
+from hydra.utils import instantiate
 from PIL import Image
 from os.path import join
 import tqdm
@@ -66,18 +67,18 @@ def get_pcd(scene_name, color_name, rgb_path, mask_generator, save_2dmask_path):
     color_image = cv2.imread(color)
     color_image = cv2.resize(color_image, (640, 480))
 
-    save_2dmask_path = join(save_2dmask_path, scene_name)
+    save_2dmask_path_dir = join(save_2dmask_path, scene_name)
     if mask_generator is not None:
         group_ids = get_sam(color_image, mask_generator)
         
         if save_2dmask_path != '':
-            if not os.path.exists(save_2dmask_path):
-                os.makedirs(save_2dmask_path)
+            if not os.path.exists(save_2dmask_path_dir):
+                os.makedirs(save_2dmask_path_dir)
             
             img = Image.fromarray(num_to_natural(group_ids).astype(np.int16), mode='I;16')
-            img.save(join(save_2dmask_path, color_name[0:-4] + '.png'))
+            img.save(join(save_2dmask_path_dir, color_name[0:-4] + '.png'))
     else:
-        group_path = join(save_2dmask_path, color_name[0:-4] + '.png')
+        group_path = join(save_2dmask_path_dir, color_name[0:-4] + '.png')
         img = Image.open(group_path)
         group_ids = np.array(img, dtype=np.int16)
 
@@ -260,13 +261,13 @@ def get_args():
     parser.add_argument('--data_path', type=str, default='', help='the path of pointcload data')
     parser.add_argument('--save_path', type=str, help='Where to save the pcd results')
     parser.add_argument('--save_2dmask_path', type=str, default='', help='Where to save 2D segmentation result from SAM')
-    parser.add_argument('--sam_checkpoint_path', type=str, default='', help='the path of checkpoint for SAM')
     parser.add_argument('--scannetv2_train_path', type=str, default='scannet-preprocess/meta_data/scannetv2_train.txt', help='the path of scannetv2_train.txt')
     parser.add_argument('--scannetv2_val_path', type=str, default='scannet-preprocess/meta_data/scannetv2_val.txt', help='the path of scannetv2_val.txt')
     parser.add_argument('--img_size', default=[640,480])
     parser.add_argument('--voxel_size', default=0.05)
     parser.add_argument('--th', default=50, help='threshold of ignoring small groups to avoid noise pixel')
-    parser.add_argument('--config_file', type=str, default='', help='the path of config file for SAM2')
+    parser.add_argument('--generator_config_file', type=str, default='', help='the path of config file for generator')
+    parser.add_argument('--num_of_scenes', type=int, default=-1, help='the number of scenes to process')
 
     args = parser.parse_args()
     return args
@@ -280,14 +281,34 @@ def main():
         train_scenes = train_file.read().splitlines()
     with open(args.scannetv2_val_path) as val_file:
         val_scenes = val_file.read().splitlines()
-    
-    mask_generator = SAM2AutomaticMaskGenerator(
-        build_sam2(config_file=args.config_file, checkpoint=args.sam_checkpoint_path).to(device="cuda")
+
+    config_path = "configs"
+    config_name = os.path.basename(args.generator_config_file)
+    print(f"Loading configuration from {config_path}/{config_name}...")
+
+    if GlobalHydra.instance().is_initialized():
+        GlobalHydra.instance().clear()
+
+    with initialize(config_path=config_path, version_base=None):
+        cfg = compose(config_name=config_name)
+        OmegaConf.resolve(cfg)
+
+    sam = sam_factory(cfg.model, cfg.misc.checkpoint_path, device="cuda")
+
+    mask_generator = build_generator(
+        cfg=cfg.generator,
+        sam_model=sam,
     )
+
     voxelize = Voxelize(voxel_size=args.voxel_size, mode="train", keys=("coord", "color", "group"))
     if not os.path.exists(args.save_path):
         os.makedirs(args.save_path)
     scene_names = sorted(os.listdir(args.rgb_path))
+    
+    if args.num_of_scenes > 0:
+        scene_names = scene_names[:args.num_of_scenes]
+    print(f"Processing {len(scene_names)} scenes...")
+    
     for scene_name in tqdm.tqdm(scene_names, desc="Processing scenes..."):
         seg_pcd(scene_name, args.rgb_path, args.data_path, args.save_path, mask_generator, args.voxel_size,
                 voxelize, args.th, train_scenes, val_scenes, args.save_2dmask_path)

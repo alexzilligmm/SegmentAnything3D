@@ -12,3 +12,5 @@ preprocessed-data
 predictions
 gts
 build
+logs
+err

@@ -1,2 +1,9 @@
-misc: 
+# @package _global_
+defaults:
+  - _self_
+
+model:
+  name: sam_vit_h
+
+misc:
   checkpoint_path: checkpoints/sam_vit_h_4b8939.pth

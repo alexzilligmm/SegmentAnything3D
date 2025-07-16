@@ -292,7 +292,7 @@ def main():
     with initialize(config_path=config_path, version_base=None):
         cfg = compose(config_name=config_name)
         OmegaConf.resolve(cfg)
-
+    
     sam = sam_factory(cfg.model, cfg.misc.checkpoint_path, device="cuda")
 
     mask_generator = build_generator(

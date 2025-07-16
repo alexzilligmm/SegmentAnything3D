@@ -16,8 +16,8 @@ from hydra.utils import instantiate
 from torchvision.ops.boxes import batched_nms, box_area  # type: ignore
 
 from automask.logger import PRSLogger
-from automask.util import batched_bm, batched_mm
-from automask.util import (
+from automask.util.boxes import batched_bm, batched_mm
+from automask.util.efficient_prompting import (
     build_clusters,
     build_layer_efficient_prompt,
     get_centres,
@@ -54,7 +54,7 @@ from sam2.utils.amg import (
     
 )
 
-
+# TODO: restore efficient generator config 
 class SAM2EfficientAutomaticMaskGenerator(SAM2AutomaticMaskGenerator):
     def __init__(
         self,

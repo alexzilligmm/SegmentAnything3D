@@ -117,4 +117,4 @@ model:
   # Compilation flag
   compile_image_encoder: False
 misc:
-  checkpoint_path: ??
+  checkpoint_path: checkpoints/sam2.1_hiera_small.pt

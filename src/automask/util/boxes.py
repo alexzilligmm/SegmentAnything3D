@@ -2,7 +2,7 @@ import torch
 from torchvision.ops.boxes import distance_box_iou
 import torchvision
 
-from automask.util import compute_pairwise_intersection
+from automask.util.metrics import compute_pairwise_intersection
 
 def bm(boxes: torch.Tensor, iou_threshold: float) -> torch.Tensor:
     N = boxes.size(0)

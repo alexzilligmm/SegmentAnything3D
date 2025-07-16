@@ -2,12 +2,12 @@ import copy
 import math
 import numpy as np
 import torch
-from automask.util import (
+from automask.util.metrics import (
     compute_pairwise_p,
-    index_to_coords,
     compute_pairwise_cosine,
     compute_pairwise_iou,
 )
+from automask.util.misc import index_to_coords
 
 
 def fps_from_median(coords: np.ndarray, k: int) -> list:

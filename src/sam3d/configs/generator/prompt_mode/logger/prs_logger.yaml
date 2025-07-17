@@ -1,4 +1,4 @@
-_target_: sam2.logger.prs_logger.PRSLogger
+_target_: automask.logger.prs_logger.PRSLogger
 model: ??
 spatial: true
 layer_index: 9 # t:9, s:13

@@ -12,3 +12,8 @@ okay you to first:
 - this the .txt files prepare_data (uv run prepare_data --scans_dir data/scans --output_dir gts)
 
 - eval_instance runs the evaluation ( uv run eval_instance --pred_path outputs/${output_subfolder}$  --gt_path gts )
+
+
+## Other commands
+
+uv run sam3d --rgb_path data/scannetv2_images --data_path preprocessed-data --save_path outputs/sam2_hiera_b+_test --num_of_scenes 5 --generator_config_file configs/sam2_hiera_b+.yaml

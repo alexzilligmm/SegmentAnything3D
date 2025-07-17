@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools", "wheel", "torch"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
@@ -152,6 +152,7 @@ dependencies = [
     "wrapt==1.14.1",
     "zipp==3.15.0",
     "plyfile>=1.1.2",
+    "hdbscan>=0.8.40",
 ]
 
 [project.scripts]

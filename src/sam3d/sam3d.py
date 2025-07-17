@@ -275,8 +275,6 @@ def get_args():
 
 def main():
     args = get_args()
-    print("Arguments:")
-    print(args)
     with open(args.scannetv2_train_path) as train_file:
         train_scenes = train_file.read().splitlines()
     with open(args.scannetv2_val_path) as val_file:

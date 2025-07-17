@@ -1,0 +1,4 @@
+defaults:
+  - generator: sam2_standard_generator
+  - model: sam2.1_hiera_b+
+  - _self_

@@ -26,7 +26,7 @@ def _load_checkpoint(model, ckpt_path):
             raise RuntimeError()
 
 def build_generator(cfg, sam_model):
-    generator = instantiate(cfg.generator, model=sam_model, _recursive_=False)
+    generator = instantiate(cfg, model=sam_model, _recursive_=False)
     return generator
 
 def sam_factory(config_file, checkpoint_path, device="cuda") -> SAM2Base:

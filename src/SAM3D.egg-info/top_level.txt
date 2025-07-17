@@ -1,1 +1,2 @@
+automask
 sam3d

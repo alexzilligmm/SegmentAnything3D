@@ -129,7 +129,7 @@ class SAM2EfficientAutomaticMaskGenerator(SAM2AutomaticMaskGenerator):
         assert prompt_mode_name in [
             "grid",
             "random",
-            "efficient"
+            "efficient",
         ], f"prompt_mode '{prompt_mode_name}' not supported."
         
         if prompt_mode.cluster_alg.name == "no_crops" and crop_mode_name == "efficient":
@@ -232,7 +232,7 @@ class SAM2EfficientAutomaticMaskGenerator(SAM2AutomaticMaskGenerator):
         self.crop_mode_name = crop_mode_name
 
     @classmethod
-    def from_pretrained(cls, model_id: str, **kwargs) -> "SAM2EfficientAutomaticMaskGenerator":
+    def from_pretrained(cls, model_id: str, **kwargs) -> "SAM2AutomaticMaskGenerator":
         """
         Load a pretrained model from the Hugging Face hub.
 
@@ -272,7 +272,7 @@ class SAM2EfficientAutomaticMaskGenerator(SAM2AutomaticMaskGenerator):
         """
 
         # Generate masks
-        mask_data, _, _ = self._generate_masks(image)
+        mask_data, points, crop_boxes = self._generate_masks(image)
         
 
         # Encode masks
@@ -287,7 +287,16 @@ class SAM2EfficientAutomaticMaskGenerator(SAM2AutomaticMaskGenerator):
 
         # Write mask records
         curr_anns = []
+        # TODO: make a function that using the masks and the scores? classify them
+        # TODO: what if we have multiple crops?
+        # TODO: shall we always do the classification for each crop or after the crop wise post processing?
+        # TODO: we are now using the first crop (the whole image) not only to generate some masks but also to crop the image sometimes
+        # TODO: shall we keep these embeddings in this case (we cannot revert the order as we need the big iage to go first to compute crops)
+        # TODO: or maybe we are doing ti twice right now, if so is enough to put it as last image for next time!!!
+        # TODO: shall we make another extra pass?
         for idx in range(len(mask_data["segmentations"])):
+            # TODO: or crop the image again and make a classification pipeline here base on the masks?
+            # TODO: or simply produce new embeddings for the whole image?
             ann = {
                 "segmentation": mask_data["segmentations"][idx],
                 "area": area_from_rle(mask_data["rles"][idx]),
@@ -299,7 +308,7 @@ class SAM2EfficientAutomaticMaskGenerator(SAM2AutomaticMaskGenerator):
             }
             curr_anns.append(ann)
 
-        return curr_anns
+        return curr_anns, points, crop_boxes
 
     def _generate_masks(self, image: np.ndarray) -> MaskData:
         orig_size = image.shape[:2]
@@ -317,12 +326,6 @@ class SAM2EfficientAutomaticMaskGenerator(SAM2AutomaticMaskGenerator):
             crop_data, points = self._process_crop(
                 image, crop_box, layer_idx, orig_size
             )
-            
-            if crop_data is None:
-                print(
-                    f"[Warning] Skipping crop {crop_box} with layer index {layer_idx} due to no points being generated."
-                )
-                continue
             
             data.cat(crop_data)
             prompted_points.append(points)
@@ -371,11 +374,8 @@ class SAM2EfficientAutomaticMaskGenerator(SAM2AutomaticMaskGenerator):
         # Get points for this crop
         inputs_for_image = self.get_input(orig_size, cropped_im_size, crop_layer_idx)
         
-        if inputs_for_image[0] is None or inputs_for_image[1] is None:
-            raise ValueError(
-                f"No points generated for crop {crop_box} with layer index {crop_layer_idx}. "
-                "This may be due to the selected prompt method or the image size."
-            )
+        if inputs_for_image[0] is None and inputs_for_image[1] is None:
+            return None, None
 
         # Generate masks for this crop in batches
         data = MaskData()
@@ -423,9 +423,10 @@ class SAM2EfficientAutomaticMaskGenerator(SAM2AutomaticMaskGenerator):
     ) -> MaskData:
         orig_h, orig_w = orig_size
 
-        print(inputs)
+        input_points, in_masks = inputs
+
         points = torch.as_tensor(
-            inputs, dtype=torch.float32, device=self.predictor.device
+            input_points, dtype=torch.float32, device=self.predictor.device
         )
 
         in_points = self.predictor._transforms.transform_coords(
@@ -437,10 +438,10 @@ class SAM2EfficientAutomaticMaskGenerator(SAM2AutomaticMaskGenerator):
         )
 
         masks, iou_preds, low_res_masks = self.predictor._predict(
-            in_points[:, None, :],
-            in_labels[:, None] ,
+            in_points[:, None, :] if not in_masks.any() else None,
+            in_labels[:, None] if not in_masks.any() is None else None,
             boxes=None,
-            mask_input= None,
+            mask_input=in_masks[:, None, :] if in_masks.any() else None,
             multimask_output=self.multimask_output,
             return_logits=True,
         )
@@ -647,13 +648,13 @@ class SAM2EfficientAutomaticMaskGenerator(SAM2AutomaticMaskGenerator):
             points_scale = np.array(cropped_im_size)[None, ::-1]
             inputs_for_image = (
                 self.point_grids[crop_layer_idx] * points_scale,
-                np.ones((self.point_grids[crop_layer_idx].shape[0],), dtype=np.int64)
+                np.full(len(points_cloud), None),
             )
         elif self.prompt_mode_name == "random":
             points_scale = np.array(cropped_im_size)[None, ::-1]
             inputs_for_image = (
                 self.point_grids[crop_layer_idx] * points_scale,
-                np.ones((self.point_grids[crop_layer_idx].shape[0],), dtype=np.int64)
+                np.full(len(points_cloud), None),
             )
         elif self.prompt_mode_name == "efficient":
             
@@ -668,13 +669,14 @@ class SAM2EfficientAutomaticMaskGenerator(SAM2AutomaticMaskGenerator):
                 metric=self.metric,
                 points_per_cluster=self.points_per_cluster,
             )
+            # TODO: we now need these to classify the masks
             self.logger.reset_attentions()
             if points_cloud is None or not isinstance(points_cloud, np.ndarray) or points_cloud.shape[0] == 0:
                 inputs_for_image = (None, None)
             else:
                 inputs_for_image = (
                     points_cloud * points_scale,
-                    np.ones((points_cloud.shape[0],), dtype=np.int64)
+                    np.full((points_cloud.shape[0],), None)
                 )
         else:
             raise ValueError("Not supported method, there might be a bug...")

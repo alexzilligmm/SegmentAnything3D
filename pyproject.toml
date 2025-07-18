@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "wheel", "torch"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
@@ -136,10 +136,10 @@ dependencies = [
     "termcolor==2.2.0",
     "threadpoolctl==3.1.0",
     "tifffile==2023.4.12",
-    "torch",
+    "torch==2.0.1,<2.1.0",
     "torch-scatter",
     "torchaudio",
-    "torchvision",
+    "torchvision==0.15.2,<0.16.0",
     "tornado==6.2",
     "tqdm==4.65.0",
     "traitlets==5.9.0",

@@ -17,3 +17,14 @@ okay you to first:
 ## Other commands
 
 uv run sam3d --rgb_path data/scannetv2_images --data_path preprocessed-data --save_path outputs/sam2_hiera_b+_test --num_of_scenes 5 --generator_config_file configs/sam2_hiera_b+.yaml
+
+
+### Efficient hiera t after _C extension fix
+uv run sam3d --rgb_path data/scannetv2_images --data_path preprocessed-data --save_path outputs/sam2_hiera_t_test_C --num_of_scenes 5 --generator_config_file configs/sam2_efficient_hiera_t.yaml
+
+
+## Table
+
+uv run sam3d --rgb_path data/scannetv2_images --data_path preprocessed-data --save_path outputs/sam2_hiera_t_test_C --num_of_scenes 5 --generator_config_file configs/sam2_efficient_hiera_t.yaml
+
+modified intersection to IoU, cluster algorithm to a more coarse one.

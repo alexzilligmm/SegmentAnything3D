@@ -3,7 +3,7 @@ name: efficient
 
 defaults:
   - logger: prs_logger
-  - cluster_alg: no_crops
+  - cluster_alg: sam3d
   - _self_
 
 centres_selection: median # options: mean, fmax, median

@@ -10,6 +10,8 @@ export CC=/storage/software/compiler/gcc-10.1.0/bin/gcc
 export CXX=/storage/software/compiler/gcc-10.1.0/bin/g++
 export PATH=$CUDA_HOME/bin:$PATH
 
+export TORCH_CXX11_ABI=1
+
 export TORCH_LIB_DIR=/storage/slurm/ziri/SegmentAnything3D/.venv/lib/python3.10/site-packages/torch/lib
 
 export LD_LIBRARY_PATH=$TORCH_LIB_DIR:$CUDA_HOME/lib64:$LD_LIBRARY_PATH

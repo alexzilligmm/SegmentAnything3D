@@ -7,7 +7,7 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where   = ["src"]
-include = ["sam3d", "sam3d.*", "automask", "automask.*"]
+include = ["sam3d", "sam3d.*", "automask", "automask.*", "sam2", "sam2.*"]
 
 [project]
 name = "SAM3D"

@@ -69,6 +69,7 @@ def get_pcd(scene_name, color_name, rgb_path, mask_generator, save_2dmask_path):
 
     save_2dmask_path_dir = join(save_2dmask_path, scene_name)
     if mask_generator is not None:
+                
         group_ids = get_sam(color_image, mask_generator)
         
         if save_2dmask_path != '':

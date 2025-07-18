@@ -30,4 +30,4 @@ echo "Testing pointops installation"
 python test_pointops.py
 
 echo "Running SAM3D to compute masks..."
-uv run sam3d --rgb_path data/scannetv2_images --data_path preprocessed-data --save_path outputs/old_sam2 --sam_checkpoint_path checkpoints/sam2.1_hiera_tiny.pt --config_file configs/sam2.1/sam2.1_hiera_t.yaml
+uv run sam3d --rgb_path data/scannetv2_images --data_path preprocessed-data --save_path outputs/sam2_hiera_t_iou --generator_config_file configs/sam2.1/sam2_efficient_hiera_t.yaml

@@ -202,9 +202,6 @@ def patches_labels_to_masks(
 def get_cluster_alg(base_cluster_alg, crop_size, original_size):
     ''' Computes the clustering algorithm to use based on the current crop size wrt to the original image. '''
     cluster_alg = copy.deepcopy(base_cluster_alg)
-    print(
-        f"[INFO] Base clustering algorithm parameters: min_samples={cluster_alg.min_samples}, min_cluster_size={cluster_alg.min_cluster_size}"
-    )
     crop_h, crop_w = crop_size
     im_h, im_w = original_size
     crop_area = crop_h * crop_w
@@ -216,7 +213,4 @@ def get_cluster_alg(base_cluster_alg, crop_size, original_size):
         cluster_alg.min_cluster_size = int(
             cluster_alg.min_cluster_size * image_area / (4 * crop_area)
         )
-    print(
-        f"[INFO] Updated clustering algorithm parameters: min_samples={cluster_alg.min_samples}, min_cluster_size={cluster_alg.min_cluster_size}"
-    )
     return cluster_alg

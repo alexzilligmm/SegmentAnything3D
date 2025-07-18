@@ -5,15 +5,15 @@ defaults:
 _target_: automask.SAM2EfficientAutomaticMaskGenerator
 
 model: ??
-number_of_points: 10 # number of points to use to prompt sam, if grid mode is selected √ is computed and the output rounded 
+number_of_points: 10 # number of points to use to prompt sam, if grid mode is selected √ is computed and the output rounded, if efficient is ignored
 points_per_batch: 64 # inner batch size of the mask generator
 pred_iou_thresh: 0.0 # threshold over model's predicted mask quality  
-stability_score_thresh: 0.7 # filter over the IoU of the masks
+stability_score_thresh: 0.7 # filter over the IoU of the masks # TODO: maybe increase this value
 stability_score_offset: 0.7
 mask_threshold: 0.0 # threshold for mask logits
 post_processing_method: mm # nms, bm, mm or none
-post_processing_thresh: 0.8 # box IoU cutoff used by nms
-use_psr: false # use post process small regions
+post_processing_thresh: 0.8 # box IoU cutoff used by nms # TODO: maybe also this value
+use_psr: false # use post process small regions # TODO: maybe switch to true
 crop_n_layers: 0 # number of layers of crops
 crop_overlap_ratio: 0.33 
 crop_n_points_downscale_factor: 2 

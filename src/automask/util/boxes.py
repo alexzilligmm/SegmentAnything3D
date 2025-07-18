@@ -2,7 +2,7 @@ import torch
 from torchvision.ops.boxes import distance_box_iou
 import torchvision
 
-from automask.util.metrics import compute_pairwise_intersection
+from automask.util.metrics import compute_pairwise_intersection, compute_pairwise_iou
 
 def bm(boxes: torch.Tensor, iou_threshold: float) -> torch.Tensor:
     N = boxes.size(0)
@@ -25,7 +25,9 @@ def mm(masks: torch.Tensor, scores: torch.Tensor, iou_threshold: float) -> torch
     _, idxs = scores.sort(descending=True)
     masks_sorted = masks[idxs]
 
-    iou = compute_pairwise_intersection(masks_sorted, device=masks.device)
+    # TODO: maybe roll back to IoU computation?
+    # iou = compute_pairwise_intersection(masks_sorted, device=masks.device)
+    iou = compute_pairwise_iou(masks_sorted, device=masks.device)
 
     mapping_sorted = union_find_clusters(iou, iou_threshold)
 

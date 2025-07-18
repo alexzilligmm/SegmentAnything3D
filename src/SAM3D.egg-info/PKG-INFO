@@ -125,10 +125,10 @@ Requires-Dist: tensorflow-io-gcs-filesystem
 Requires-Dist: termcolor==2.2.0
 Requires-Dist: threadpoolctl==3.1.0
 Requires-Dist: tifffile==2023.4.12
-Requires-Dist: torch
+Requires-Dist: torch<2.1.0,==2.0.1
 Requires-Dist: torch-scatter
 Requires-Dist: torchaudio
-Requires-Dist: torchvision
+Requires-Dist: torchvision<0.16.0,==0.15.2
 Requires-Dist: tornado==6.2
 Requires-Dist: tqdm==4.65.0
 Requires-Dist: traitlets==5.9.0
@@ -167,3 +167,10 @@ uv run sam3d --rgb_path data/scannetv2_images --data_path preprocessed-data --sa
 
 ### Efficient hiera t after _C extension fix
 uv run sam3d --rgb_path data/scannetv2_images --data_path preprocessed-data --save_path outputs/sam2_hiera_t_test_C --num_of_scenes 5 --generator_config_file configs/sam2_efficient_hiera_t.yaml
+
+
+## Table
+
+uv run sam3d --rgb_path data/scannetv2_images --data_path preprocessed-data --save_path outputs/sam2_hiera_t_test_C --num_of_scenes 5 --generator_config_file configs/sam2_efficient_hiera_t.yaml
+
+modified intersection to IoU, cluster algorithm to a more coarse one.

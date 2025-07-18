@@ -26,7 +26,6 @@ from automask.util.efficient_prompting import (
 )
 from automask.amg import (
     build_all_layer_random_cloud,
-    generate_crop_boxes,
     generate_crop_efficient,
     MaskData,
     merge_crop_boxes,
@@ -39,6 +38,7 @@ from sam2.utils.amg import (
     build_all_layer_point_grids,
     area_from_rle,
     batch_iterator,
+    generate_crop_boxes,
     batched_mask_to_box,
     box_xyxy_to_xywh,
     calculate_stability_score,

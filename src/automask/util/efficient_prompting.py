@@ -206,7 +206,6 @@ def get_cluster_alg(base_cluster_alg, crop_size, original_size):
     im_h, im_w = original_size
     crop_area = crop_h * crop_w
     image_area = im_h * im_w
-    # TODO: tune these parameters maybe introduce some alpha and betas?
     if hasattr(cluster_alg, "min_samples") and image_area > crop_area:
         cluster_alg.min_samples = int(cluster_alg.min_samples * image_area / (2 * crop_area))
     if hasattr(cluster_alg, "min_cluster_size") and image_area > crop_area:

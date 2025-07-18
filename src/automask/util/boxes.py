@@ -25,7 +25,7 @@ def mm(masks: torch.Tensor, scores: torch.Tensor, iou_threshold: float) -> torch
     _, idxs = scores.sort(descending=True)
     masks_sorted = masks[idxs]
 
-    # TODO: maybe roll back to IoU computation?
+    # TODO: we prefer IoU when we have to compute masks directly, intersection is better for crops.
     # iou = compute_pairwise_intersection(masks_sorted, device=masks.device)
     iou = compute_pairwise_iou(masks_sorted, device=masks.device)
 

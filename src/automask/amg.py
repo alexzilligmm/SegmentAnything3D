@@ -12,8 +12,6 @@ from typing import Any, ItemsView, List, Tuple
 import numpy as np
 import torch
 
-from sam2.utils.amg import generate_crop_boxes
-
 
 # Very lightly adapted from https://github.com/facebookresearch/segment-anything/blob/main/segment_anything/utils/amg.py
 
